@@ -1,0 +1,30 @@
+<doc>
+	<style name="Bracket" color="#ff9900"/>
+	<style name="Comment" color="Green" />
+	<style name="String" color="Brown" />
+	<style name="Number" color="#00bfff" />
+	<style name="Keyword" color="Blue" />
+	<style name="Operator" color="Red" />
+	<style name="Function" color="Purple" />
+	<style name="Class" color="Teal" />
+	
+	<rule style="Bracket">[\(\)]|[\[\]]|[\{\}]</rule>
+	<rule style="Comment" options="Multiline">(?&lt;!\S)\s*#.*</rule>
+	<rule style="String" options="Singleline">(r|u|ur|R|U|UR|Ur|uR)?('.*?'|".*?")</rule>
+	<rule style="String">'''|"""</rule>
+	<rule style="Number">(?&lt;!\w\.)\b\d+(\.\d+)?\b(?!\.\w)</rule>
+	<rule style="Keyword">\b(False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|
+							 |if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b</rule>
+	<!-- rule style="Operator">[+\-*/%=&lt;&gt;!&amp;|^~]</rule -->
+	<rule style="Function">\bdef\s+(?&lt;range&gt;\w+)\b</rule>
+	<rule style="Class">\bclass\s+(?&lt;range&gt;\w+)\b</rule>
+	
+	<autocomplete style="Keyword">WORK_PATH,RULE_PATH</autocomplete>
+	<autocomplete style="Method">Text,Size,Location,TopMost,CenterToScreen(),ShowDialog()</autocomplete>
+	<autocomplete style="Snippet"></autocomplete>
+	<autocomplete style="DeclarationSnippet">abs(^),all(^),any(^),ascii(^),bin(^),bool(^),bytearray(^),bytes(^),callable(^),chr(^),classmethod(^),compile(^),complex(^),
+											 delattr(^),dict(^),dir(^),divmod(^),enumerate(^),eval(^),exec(^),filter(^),float(^),format(^),frozenset(^),getattr(^),globals(^),
+											 hasattr(^),hash(^),help(^),hex(^),id(^),input(^),int(^),isinstance(^),issubclass(^),iter(^),len(^),list(^),locals(^),
+											 map(^),max(^),memoryview(^),min(^),next(^),object(^),oct(^),open(^),ord(^),pow(^),print(^),property(^),range(^),repr(^),reversed(^),round(^),
+											 set(^),setattr(^),slice(^),sorted(^),staticmethod(^),str(^),sum(^),super(^),tuple(^),type(^),vars(^),zip(^),__import__(^),reload(^)</autocomplete>
+</doc>
