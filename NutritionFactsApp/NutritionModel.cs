@@ -30,5 +30,7 @@ namespace NutritionFactsApp
         public decimal Calcium { get; set; }
         public decimal Iron { get; set; }
         public decimal Potassium { get; set; }
+
+        public string Manufacturer { get; set; }
     }
 }

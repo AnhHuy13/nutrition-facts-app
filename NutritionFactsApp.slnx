@@ -1,3 +1,9 @@
 <Solution>
-  <Project Path="NutritionFactsApp/NutritionFactsApp.csproj" Id="daf84b18-2c66-4f56-9df2-882210d2c8fd" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="NutritionFactsApp/NutritionFactsApp.csproj" Id="daf84b18-2c66-4f56-9df2-882210d2c8fd">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
 </Solution>

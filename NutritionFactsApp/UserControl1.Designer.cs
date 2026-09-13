@@ -77,6 +77,9 @@
             this.picProductImage = new System.Windows.Forms.PictureBox();
             this.codeEditor = new FastColoredTextBoxNS.FastColoredTextBox();
             this.exportBtn = new System.Windows.Forms.Button();
+            this.lblError = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txtNameFile = new System.Windows.Forms.TextBox();
             this.grpGeneralInfo.SuspendLayout();
             this.tlpGeneralInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudServingCount)).BeginInit();
@@ -114,13 +117,13 @@
             this.grpGeneralInfo.Size = new System.Drawing.Size(790, 165);
             this.grpGeneralInfo.TabIndex = 1;
             this.grpGeneralInfo.TabStop = false;
-            this.grpGeneralInfo.Text = "Thông tin chung";
+            this.grpGeneralInfo.Text = "Thông tin chung (Bắt buộc phải điền để hiện Xem trước)";
             // 
             // txtServingUnit
             // 
             this.txtServingUnit.Location = new System.Drawing.Point(224, 133);
             this.txtServingUnit.Name = "txtServingUnit";
-            this.txtServingUnit.Size = new System.Drawing.Size(222, 26);
+            this.txtServingUnit.Size = new System.Drawing.Size(353, 26);
             this.txtServingUnit.TabIndex = 9;
             // 
             // tlpGeneralInfo
@@ -129,7 +132,7 @@
             this.tlpGeneralInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.84071F));
             this.tlpGeneralInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.15929F));
             this.tlpGeneralInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 234F));
-            this.tlpGeneralInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 181F));
+            this.tlpGeneralInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 185F));
             this.tlpGeneralInfo.Controls.Add(this.label1, 0, 0);
             this.tlpGeneralInfo.Controls.Add(this.nudServingCount, 1, 1);
             this.tlpGeneralInfo.Controls.Add(this.txtProductName, 1, 0);
@@ -160,21 +163,21 @@
             // 
             // nudServingCount
             // 
-            this.nudServingCount.Location = new System.Drawing.Point(129, 50);
+            this.nudServingCount.Location = new System.Drawing.Point(128, 50);
             this.nudServingCount.Maximum = new decimal(new int[] {
             40,
             0,
             0,
             0});
             this.nudServingCount.Name = "nudServingCount";
-            this.nudServingCount.Size = new System.Drawing.Size(220, 26);
+            this.nudServingCount.Size = new System.Drawing.Size(217, 26);
             this.nudServingCount.TabIndex = 4;
             // 
             // txtProductName
             // 
-            this.txtProductName.Location = new System.Drawing.Point(129, 3);
+            this.txtProductName.Location = new System.Drawing.Point(128, 3);
             this.txtProductName.Name = "txtProductName";
-            this.txtProductName.Size = new System.Drawing.Size(220, 26);
+            this.txtProductName.Size = new System.Drawing.Size(217, 26);
             this.txtProductName.TabIndex = 1;
             // 
             // label2
@@ -191,7 +194,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(355, 0);
+            this.label3.Location = new System.Drawing.Point(351, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(217, 22);
             this.label3.TabIndex = 5;
@@ -199,7 +202,7 @@
             // 
             // nudServingWeight
             // 
-            this.nudServingWeight.Location = new System.Drawing.Point(589, 3);
+            this.nudServingWeight.Location = new System.Drawing.Point(585, 3);
             this.nudServingWeight.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -211,7 +214,12 @@
             // 
             // nudCalories
             // 
-            this.nudCalories.Location = new System.Drawing.Point(589, 50);
+            this.nudCalories.Location = new System.Drawing.Point(585, 50);
+            this.nudCalories.Maximum = new decimal(new int[] {
+            -1530494976,
+            232830,
+            0,
+            0});
             this.nudCalories.Name = "nudCalories";
             this.nudCalories.Size = new System.Drawing.Size(173, 26);
             this.nudCalories.TabIndex = 8;
@@ -220,7 +228,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label4.Location = new System.Drawing.Point(355, 47);
+            this.label4.Location = new System.Drawing.Point(351, 47);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(81, 22);
             this.label4.TabIndex = 7;
@@ -239,7 +247,7 @@
             // grpMacroNutrients
             // 
             this.grpMacroNutrients.Controls.Add(this.tlpMacroNutrients);
-            this.grpMacroNutrients.Location = new System.Drawing.Point(25, 190);
+            this.grpMacroNutrients.Location = new System.Drawing.Point(25, 195);
             this.grpMacroNutrients.Name = "grpMacroNutrients";
             this.grpMacroNutrients.Size = new System.Drawing.Size(790, 263);
             this.grpMacroNutrients.TabIndex = 2;
@@ -252,7 +260,7 @@
             this.tlpMacroNutrients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.84795F));
             this.tlpMacroNutrients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.15205F));
             this.tlpMacroNutrients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 218F));
-            this.tlpMacroNutrients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 215F));
+            this.tlpMacroNutrients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 219F));
             this.tlpMacroNutrients.Controls.Add(this.nudProtein, 3, 4);
             this.tlpMacroNutrients.Controls.Add(this.label5, 0, 0);
             this.tlpMacroNutrients.Controls.Add(this.nudTotalFat, 1, 0);
@@ -286,9 +294,9 @@
             // 
             // nudProtein
             // 
-            this.nudProtein.Location = new System.Drawing.Point(560, 166);
+            this.nudProtein.Location = new System.Drawing.Point(556, 166);
             this.nudProtein.Maximum = new decimal(new int[] {
-            40,
+            9999,
             0,
             0,
             0});
@@ -308,16 +316,21 @@
             // 
             // nudTotalFat
             // 
-            this.nudTotalFat.Location = new System.Drawing.Point(192, 3);
+            this.nudTotalFat.Location = new System.Drawing.Point(190, 3);
+            this.nudTotalFat.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudTotalFat.Name = "nudTotalFat";
-            this.nudTotalFat.Size = new System.Drawing.Size(144, 26);
+            this.nudTotalFat.Size = new System.Drawing.Size(142, 26);
             this.nudTotalFat.TabIndex = 9;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label6.Location = new System.Drawing.Point(342, 0);
+            this.label6.Location = new System.Drawing.Point(338, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(137, 22);
             this.label6.TabIndex = 7;
@@ -325,7 +338,12 @@
             // 
             // nudSaturatedFat
             // 
-            this.nudSaturatedFat.Location = new System.Drawing.Point(560, 3);
+            this.nudSaturatedFat.Location = new System.Drawing.Point(556, 3);
+            this.nudSaturatedFat.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudSaturatedFat.Name = "nudSaturatedFat";
             this.nudSaturatedFat.Size = new System.Drawing.Size(205, 26);
             this.nudSaturatedFat.TabIndex = 10;
@@ -342,16 +360,21 @@
             // 
             // nudTransFat
             // 
-            this.nudTransFat.Location = new System.Drawing.Point(192, 46);
+            this.nudTransFat.Location = new System.Drawing.Point(190, 46);
+            this.nudTransFat.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudTransFat.Name = "nudTransFat";
-            this.nudTransFat.Size = new System.Drawing.Size(144, 26);
+            this.nudTransFat.Size = new System.Drawing.Size(142, 26);
             this.nudTransFat.TabIndex = 12;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label9.Location = new System.Drawing.Point(342, 43);
+            this.label9.Location = new System.Drawing.Point(338, 43);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(147, 22);
             this.label9.TabIndex = 0;
@@ -359,9 +382,9 @@
             // 
             // nudCholesterol
             // 
-            this.nudCholesterol.Location = new System.Drawing.Point(560, 46);
+            this.nudCholesterol.Location = new System.Drawing.Point(556, 46);
             this.nudCholesterol.Maximum = new decimal(new int[] {
-            40,
+            9999,
             0,
             0,
             0});
@@ -381,16 +404,21 @@
             // 
             // nudSodium
             // 
-            this.nudSodium.Location = new System.Drawing.Point(192, 83);
+            this.nudSodium.Location = new System.Drawing.Point(190, 83);
+            this.nudSodium.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudSodium.Name = "nudSodium";
-            this.nudSodium.Size = new System.Drawing.Size(144, 26);
+            this.nudSodium.Size = new System.Drawing.Size(142, 26);
             this.nudSodium.TabIndex = 13;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label10.Location = new System.Drawing.Point(342, 80);
+            this.label10.Location = new System.Drawing.Point(338, 80);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(198, 22);
             this.label10.TabIndex = 5;
@@ -398,7 +426,7 @@
             // 
             // nudTotalCarbs
             // 
-            this.nudTotalCarbs.Location = new System.Drawing.Point(560, 83);
+            this.nudTotalCarbs.Location = new System.Drawing.Point(556, 83);
             this.nudTotalCarbs.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -420,21 +448,21 @@
             // 
             // nudDietaryFiber
             // 
-            this.nudDietaryFiber.Location = new System.Drawing.Point(192, 126);
+            this.nudDietaryFiber.Location = new System.Drawing.Point(190, 126);
             this.nudDietaryFiber.Maximum = new decimal(new int[] {
             9999,
             0,
             0,
             0});
             this.nudDietaryFiber.Name = "nudDietaryFiber";
-            this.nudDietaryFiber.Size = new System.Drawing.Size(144, 26);
+            this.nudDietaryFiber.Size = new System.Drawing.Size(142, 26);
             this.nudDietaryFiber.TabIndex = 15;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label12.Location = new System.Drawing.Point(342, 123);
+            this.label12.Location = new System.Drawing.Point(338, 123);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(188, 22);
             this.label12.TabIndex = 16;
@@ -442,7 +470,7 @@
             // 
             // nudTotalSugars
             // 
-            this.nudTotalSugars.Location = new System.Drawing.Point(560, 126);
+            this.nudTotalSugars.Location = new System.Drawing.Point(556, 126);
             this.nudTotalSugars.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -464,21 +492,21 @@
             // 
             // nudAddedSugars
             // 
-            this.nudAddedSugars.Location = new System.Drawing.Point(192, 166);
+            this.nudAddedSugars.Location = new System.Drawing.Point(190, 166);
             this.nudAddedSugars.Maximum = new decimal(new int[] {
             9999,
             0,
             0,
             0});
             this.nudAddedSugars.Name = "nudAddedSugars";
-            this.nudAddedSugars.Size = new System.Drawing.Size(144, 26);
+            this.nudAddedSugars.Size = new System.Drawing.Size(142, 26);
             this.nudAddedSugars.TabIndex = 19;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label14.Location = new System.Drawing.Point(342, 163);
+            this.label14.Location = new System.Drawing.Point(338, 163);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(119, 22);
             this.label14.TabIndex = 20;
@@ -487,7 +515,7 @@
             // grpMicroNutrients
             // 
             this.grpMicroNutrients.Controls.Add(this.tlpMicroNutrients);
-            this.grpMicroNutrients.Location = new System.Drawing.Point(25, 461);
+            this.grpMicroNutrients.Location = new System.Drawing.Point(25, 466);
             this.grpMicroNutrients.Name = "grpMicroNutrients";
             this.grpMicroNutrients.Size = new System.Drawing.Size(385, 269);
             this.grpMicroNutrients.TabIndex = 5;
@@ -512,7 +540,7 @@
             this.tlpMicroNutrients.RowCount = 4;
             this.tlpMicroNutrients.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 53.24675F));
             this.tlpMicroNutrients.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 46.75325F));
-            this.tlpMicroNutrients.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
+            this.tlpMicroNutrients.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.tlpMicroNutrients.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
             this.tlpMicroNutrients.Size = new System.Drawing.Size(338, 155);
             this.tlpMicroNutrients.TabIndex = 5;
@@ -530,6 +558,11 @@
             // nudVitaminD
             // 
             this.nudVitaminD.Location = new System.Drawing.Point(189, 3);
+            this.nudVitaminD.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudVitaminD.Name = "nudVitaminD";
             this.nudVitaminD.Size = new System.Drawing.Size(145, 26);
             this.nudVitaminD.TabIndex = 9;
@@ -538,7 +571,7 @@
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label17.Location = new System.Drawing.Point(3, 38);
+            this.label17.Location = new System.Drawing.Point(3, 41);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(102, 22);
             this.label17.TabIndex = 11;
@@ -546,7 +579,12 @@
             // 
             // nudCalcium
             // 
-            this.nudCalcium.Location = new System.Drawing.Point(189, 41);
+            this.nudCalcium.Location = new System.Drawing.Point(189, 44);
+            this.nudCalcium.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudCalcium.Name = "nudCalcium";
             this.nudCalcium.Size = new System.Drawing.Size(145, 26);
             this.nudCalcium.TabIndex = 12;
@@ -555,7 +593,7 @@
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label19.Location = new System.Drawing.Point(3, 71);
+            this.label19.Location = new System.Drawing.Point(3, 77);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(83, 22);
             this.label19.TabIndex = 2;
@@ -563,7 +601,12 @@
             // 
             // nudIron
             // 
-            this.nudIron.Location = new System.Drawing.Point(189, 74);
+            this.nudIron.Location = new System.Drawing.Point(189, 80);
+            this.nudIron.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.nudIron.Name = "nudIron";
             this.nudIron.Size = new System.Drawing.Size(145, 26);
             this.nudIron.TabIndex = 13;
@@ -592,12 +635,14 @@
             // 
             // picProductImage
             // 
-            this.picProductImage.Location = new System.Drawing.Point(830, 28);
+            this.picProductImage.Location = new System.Drawing.Point(865, 28);
             this.picProductImage.Name = "picProductImage";
-            this.picProductImage.Size = new System.Drawing.Size(360, 425);
+            this.picProductImage.Size = new System.Drawing.Size(273, 425);
             this.picProductImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picProductImage.TabIndex = 8;
             this.picProductImage.TabStop = false;
+            this.picProductImage.Click += new System.EventHandler(this.picProductImage_Click);
+            this.picProductImage.Paint += new System.Windows.Forms.PaintEventHandler(this.picProductImage_Paint);
             // 
             // codeEditor
             // 
@@ -634,17 +679,47 @@
             this.exportBtn.BackColor = System.Drawing.SystemColors.HotTrack;
             this.exportBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.exportBtn.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.exportBtn.Location = new System.Drawing.Point(432, 515);
+            this.exportBtn.Location = new System.Drawing.Point(432, 544);
             this.exportBtn.Name = "exportBtn";
             this.exportBtn.Size = new System.Drawing.Size(266, 70);
             this.exportBtn.TabIndex = 10;
             this.exportBtn.Text = "Xuất ra file hình";
             this.exportBtn.UseVisualStyleBackColor = false;
             // 
+            // lblError
+            // 
+            this.lblError.AutoSize = true;
+            this.lblError.Location = new System.Drawing.Point(922, 195);
+            this.lblError.Name = "lblError";
+            this.lblError.Size = new System.Drawing.Size(159, 20);
+            this.lblError.TabIndex = 11;
+            this.lblError.Text = "Nhập đầy đủ 4 ô đầu!";
+            this.lblError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.label18.Location = new System.Drawing.Point(428, 475);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(75, 22);
+            this.label18.TabIndex = 22;
+            this.label18.Text = "Tên file:";
+            // 
+            // txtNameFile
+            // 
+            this.txtNameFile.Location = new System.Drawing.Point(432, 500);
+            this.txtNameFile.Name = "txtNameFile";
+            this.txtNameFile.Size = new System.Drawing.Size(266, 26);
+            this.txtNameFile.TabIndex = 10;
+            // 
             // UserControl1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.txtNameFile);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.lblError);
             this.Controls.Add(this.exportBtn);
             this.Controls.Add(this.codeEditor);
             this.Controls.Add(this.picProductImage);
@@ -684,6 +759,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picProductImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.codeEditor)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -738,5 +814,8 @@
         private System.Windows.Forms.PictureBox picProductImage;
         private FastColoredTextBoxNS.FastColoredTextBox codeEditor;
         private System.Windows.Forms.Button exportBtn;
+        private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox txtNameFile;
     }
 }
