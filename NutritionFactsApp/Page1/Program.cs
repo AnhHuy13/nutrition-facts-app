@@ -11,12 +11,16 @@ namespace NutritionFactsApp
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        public static Form1 MainForm { get; private set; }
+
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            MainForm = new Form1();
+            Application.Run(MainForm);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace NutritionFactsApp
                         scope.Set("output_path", targetPath);
 
                         // sẽ thêm metadata đây
-                        string script = @"
+                        string script = $@"
 import json
 import sys
 import os
@@ -39,14 +39,14 @@ d = json.loads(data_json)
 
 # Chuẩn FDA (DV) cho cả Đa lượng và Vi lượng
 # Đơn vị trong dict: g (đa lượng), mg/mcg (vi lượng)
-DV_STANDARDS = {
+DV_STANDARDS = {{
     'Total Fat': 78, 'Saturated Fat': 20, 'Cholesterol': 300, 
     'Sodium': 2300, 'Total Carbohydrate': 275, 'Dietary Fiber': 28, 'Protein': 50,
     'Vitamin D': 20,    # mcg
     'Calcium': 1300,    # mg
     'Iron': 18,         # mg
     'Potassium': 4700   # mg
-}
+}}
 
 def get_dv(name, value):
     if value <= 0: return 0
@@ -80,10 +80,10 @@ weight_val = d.get('ServingWeight', 0)
 
 
 #ghép chuỗi đơn vị và size 
-if unit_text and unit_text != 'VD: bịch, phần, gói, hộp,... (KHÔNG BẮT BUỘC)':
-    formatted_size = f'{unit_text} ({int(weight_val)}g)'
+if unit_text and unit_text != '{Constants.PlaceHolderForTxtServingUnit}':
+    formatted_size = f'{{unit_text}} ({{int(weight_val)}}g)'
 else:
-    formatted_size = f'{int(weight_val)}g'
+    formatted_size = f'{{int(weight_val)}}g'
 
 
 

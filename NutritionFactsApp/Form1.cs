@@ -8,6 +8,7 @@ namespace NutritionFactsApp
 {
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
@@ -55,12 +56,12 @@ namespace NutritionFactsApp
         }
         private void manageFactsBtnNav_Click(object sender, EventArgs e)
         {
-            // Xử lý sự kiện click cho nút quản lý_FACTS
+            // will make it soon
         }
 
         private void createFactsBtnNav_Click(object sender, EventArgs e)
         {
-            // Xử lý sự kiện click cho nút tạo_FACTS
+            // will make it soon
         }
     }
 }

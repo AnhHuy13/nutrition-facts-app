@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+python-3.8/*
+bin
+obj
+NutritionFactsApp/python-3.8/*
+_python
