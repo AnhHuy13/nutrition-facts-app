@@ -1,8 +1,8 @@
-using Python.Runtime;
-using System.Threading.Tasks;
-using System;
 using Newtonsoft.Json;
+using Python.Runtime;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NutritionFactsApp
 {

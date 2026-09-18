@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Threading.Tasks;
 
 namespace NutritionFactsApp
 {
@@ -14,8 +13,8 @@ namespace NutritionFactsApp
             InitializeComponent();
             InitializePython();
 
-            this.Width = 960;
-            this.Height = 580;
+            this.Width = 1539;
+            this.Height = 600;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;

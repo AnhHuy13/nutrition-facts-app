@@ -1,9 +1,11 @@
+using FastColoredTextBoxNS;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using FastColoredTextBoxNS;
-using Newtonsoft.Json;
 
 namespace NutritionFactsApp
 {
@@ -12,20 +14,25 @@ namespace NutritionFactsApp
         private bool _isUpdating = false;
         private Timer _debounceTimer;
         private string _currentImagePath = null;
-        public NutritionModel CurrentModel { get; set; } = new NutritionModel();
+
+        // Thay đổi: Dùng List thay cho CurrentModel đơn lẻ
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public List<NutritionModel> BatchList { get; set; } = new List<NutritionModel> { new NutritionModel(), new NutritionModel() };
 
         public UserControl1()
         {
             InitializeComponent();
 
-            // 1. Khởi tạo Timer cho Preview
             _debounceTimer = new Timer();
             _debounceTimer.Interval = 500;
             _debounceTimer.Tick += DebounceTimer_Tick;
 
-            // 2. Gán sự kiện cho mọi Control
             RegisterUIEvents(this);
             codeEditor.TextChanged += CodeEditor_TextChanged;
+
+            // Đăng ký sự kiện đổi Tab
+            tabControlProducts.SelectedIndexChanged += TabControl_SelectedIndexChanged;
         }
 
         private void UserControl1_Load(object sender, EventArgs e)
@@ -33,6 +40,34 @@ namespace NutritionFactsApp
             Ultility.SetPlaceholder(txtProductName, Constants.PlaceHolderForTxtProductName);
             Ultility.SetPlaceholder(txtServingUnit, Constants.PlaceHolderForTxtServingUnit);
             SetCodeEditor(codeEditor);
+
+            UpdateTabs();
+            if (BatchList.Count > 0)
+            {
+                JsonMapper.MapModelToUI(this, BatchList[0]);
+            }
+            codeEditor.Text = JsonConvert.SerializeObject(BatchList, Formatting.Indented);
+        }
+
+        private void UpdateTabs()
+        {
+            _isUpdating = true;
+            int oldIndex = tabControlProducts.SelectedIndex;
+            tabControlProducts.TabPages.Clear();
+            for (int i = 0; i < BatchList.Count; i++)
+            {
+                string title = string.IsNullOrWhiteSpace(BatchList[i].ProductName) ? $"Sản phẩm {i + 1}" : BatchList[i].ProductName;
+                tabControlProducts.TabPages.Add(title);
+            }
+            if (oldIndex >= 0 && oldIndex < tabControlProducts.TabPages.Count)
+            {
+                tabControlProducts.SelectedIndex = oldIndex;
+            }
+            else if (tabControlProducts.TabPages.Count > 0)
+            {
+                tabControlProducts.SelectedIndex = 0;
+            }
+            _isUpdating = false;
         }
 
         private void RegisterUIEvents(Control parent)
@@ -45,8 +80,6 @@ namespace NutritionFactsApp
                 if (c.HasChildren) RegisterUIEvents(c);
             }
         }
-
-        // --- CÁC HÀM HỖ TRỢ ---
 
         public void SetCodeEditor(FastColoredTextBox editor)
         {
@@ -67,19 +100,39 @@ namespace NutritionFactsApp
             editor.OnTextChanged();
         }
 
-        // --- ĐỒNG BỘ DỮ LIỆU ---
-
         private void UI_Changed(object sender, EventArgs e)
         {
             if (_isUpdating) return;
             _isUpdating = true;
 
-            JsonMapper.MapUIToModel(this, CurrentModel);
-            codeEditor.Text = JsonConvert.SerializeObject(CurrentModel, Formatting.Indented);
+            int index = tabControlProducts.SelectedIndex;
+            if (index >= 0 && index < BatchList.Count)
+            {
+                JsonMapper.MapUIToModel(this, BatchList[index]);
+                string tabTitle = string.IsNullOrWhiteSpace(BatchList[index].ProductName) ? $"Sản phẩm {index + 1}" : BatchList[index].ProductName;
+                if (tabControlProducts.TabPages[index].Text != tabTitle)
+                {
+                    tabControlProducts.TabPages[index].Text = tabTitle;
+                }
+                codeEditor.Text = JsonConvert.SerializeObject(BatchList, Formatting.Indented);
+            }
 
             _debounceTimer.Stop();
             _debounceTimer.Start();
 
+            _isUpdating = false;
+        }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_isUpdating) return;
+            _isUpdating = true;
+            int index = tabControlProducts.SelectedIndex;
+            // Đảm bảo không vượt quá chỉ số mảng
+            if (index >= 0 && index < BatchList.Count)
+            {
+                JsonMapper.MapModelToUI(this, BatchList[index]);
+            }
             _isUpdating = false;
         }
 
@@ -90,12 +143,16 @@ namespace NutritionFactsApp
 
             try
             {
-                var data = JsonConvert.DeserializeObject<NutritionModel>(codeEditor.Text);
-                if (data != null)
+                var data = JsonConvert.DeserializeObject<List<NutritionModel>>(codeEditor.Text);
+                if (data != null && data.Count > 0)
                 {
-                    CurrentModel = data;
-                    JsonMapper.MapModelToUI(this, CurrentModel);
-
+                    BatchList = data;
+                    UpdateTabs();
+                    int index = tabControlProducts.SelectedIndex;
+                    if (index >= 0 && index < BatchList.Count)
+                    {
+                        JsonMapper.MapModelToUI(this, BatchList[index]);
+                    }
                     _debounceTimer.Stop();
                     _debounceTimer.Start();
                 }
@@ -105,34 +162,25 @@ namespace NutritionFactsApp
             _isUpdating = false;
         }
 
-        // --- PREVIEW RENDER ---
-
         private async void DebounceTimer_Tick(object sender, EventArgs e)
         {
             _debounceTimer.Stop();
-            if (string.IsNullOrWhiteSpace(CurrentModel.ProductName)) return;
+            int index = tabControlProducts.SelectedIndex;
+            if (index < 0 || index >= BatchList.Count) return;
+            var model = BatchList[index];
+            if (string.IsNullOrWhiteSpace(model.ProductName)) return;
 
             try
             {
-                string newImagePath = await new Python().RunGeneratorAsync(CurrentModel);
-
+                string newImagePath = await new Python().RunGeneratorAsync(model);
                 if (File.Exists(newImagePath))
                 {
                     lblError.Visible = false;
-                    if (picProductImage.Image != null)
-                    {
-                        picProductImage.Image.Dispose();
-                        picProductImage.Image = null;
-                    }
+                    if (picProductImage.Image != null) { picProductImage.Image.Dispose(); picProductImage.Image = null; }
 
                     using (var fs = new FileStream(newImagePath, FileMode.Open, FileAccess.Read))
                     {
                         picProductImage.Image = Image.FromStream(fs);
-                    }
-
-                    if (_currentImagePath != null && File.Exists(_currentImagePath))
-                    {
-                        try { File.Delete(_currentImagePath); } catch { }
                     }
                     _currentImagePath = newImagePath;
                 }
@@ -145,7 +193,6 @@ namespace NutritionFactsApp
         }
 
         private void picProductImage_Click(object sender, EventArgs e) { }
-
         private void picProductImage_Paint(object sender, PaintEventArgs e)
         {
             ControlPaint.DrawBorder(e.Graphics, picProductImage.ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
@@ -159,55 +206,20 @@ namespace NutritionFactsApp
 
         private void exportBtn_Click(object sender, EventArgs e)
         {
-            if (picProductImage.Image == null)
+            // Logic xuất ảnh hiện tại của tab đang chọn
+            if (picProductImage.Image == null) return;
+            string path = SaveImage.SelectFolder();
+            if (!string.IsNullOrEmpty(path))
             {
-                MessageBox.Show("Chưa có ảnh!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                SaveImage.SaveImageToFile(picProductImage, Path.Combine(path, SaveImage.BuildFileName(BatchList[tabControlProducts.SelectedIndex].ProductName)));
             }
-
-            if (SaveImage.IsRegistryKeyExists())
-            {
-                try
-                {
-                    SaveImage.SaveImageToFile(picProductImage, SaveImage.ReadRegistryKeys());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi lưu ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                try
-                {
-                    string path = SaveImage.SelectFolder();
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        SaveImage.SaveImageToFile(picProductImage, path);
-                    }
-                    else
-                    {
-                        //abort
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi lưu ảnh: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        } 
+        }
 
         private void txtProductName_TextChanged(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtProductName.Text) && txtProductName.Text != Constants.PlaceHolderForTxtProductName)
             {
-                Console.WriteLine("txtProductName_TextChanged: " + txtProductName.Text);
                 txtNameFile.Text = SaveImage.BuildFileName(txtProductName.Text);
-            }
-            else
-            {
-                txtNameFile.Text = "";
-                //do nothing
             }
         }
     }

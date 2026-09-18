@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            NutritionFactsApp.NutritionModel nutritionModel1 = new NutritionFactsApp.NutritionModel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.manageFactsBtnNav = new System.Windows.Forms.Button();
             this.userControl11 = new NutritionFactsApp.UserControl1();
@@ -49,9 +48,9 @@
             this.panel2.Controls.Add(this.userControl11);
             this.panel2.Controls.Add(this.createFactsBtnNav);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 36);
+            this.panel2.Location = new System.Drawing.Point(0, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1481, 714);
+            this.panel2.Size = new System.Drawing.Size(1517, 811);
             this.panel2.TabIndex = 1;
             // 
             // manageFactsBtnNav
@@ -67,97 +66,9 @@
             // 
             // userControl11
             // 
-            nutritionModel1.AddedSugars = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Calcium = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Calories = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Cholesterol = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.DietaryFiber = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Iron = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Potassium = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.ProductName = "";
-            nutritionModel1.Protein = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.SaturatedFat = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.ServingCount = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.ServingUnit = "";
-            nutritionModel1.ServingWeight = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.Sodium = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.TotalCarbohydrate = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.TotalFat = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.TotalSugars = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.TransFat = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            nutritionModel1.VitaminD = new decimal(new int[] {
-            0,
-            0,
-            0,
-            65536});
-            this.userControl11.CurrentModel = nutritionModel1;
             this.userControl11.Location = new System.Drawing.Point(211, 3);
             this.userControl11.Name = "userControl11";
-            this.userControl11.Size = new System.Drawing.Size(1270, 777);
+            this.userControl11.Size = new System.Drawing.Size(1270, 851);
             this.userControl11.TabIndex = 2;
             // 
             // createFactsBtnNav
@@ -180,7 +91,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1481, 36);
+            this.menuStrip1.Size = new System.Drawing.Size(1517, 33);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -189,7 +100,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toNewDictToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 30);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // toNewDictToolStripMenuItem
@@ -203,9 +114,9 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 728);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 822);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1481, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1517, 22);
             this.statusStrip1.TabIndex = 4;
             // 
             // toolStripStatusLabel
@@ -217,7 +128,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1481, 750);
+            this.ClientSize = new System.Drawing.Size(1517, 844);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.menuStrip1);

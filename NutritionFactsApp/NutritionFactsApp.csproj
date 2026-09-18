@@ -133,7 +133,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -157,12 +156,9 @@
     <Content Include="nutrition_facts\__init__.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    
-
-      <Content Include="python-3.8\**\*.*">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-
+    <Content Include="python-3.8\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Python.Runtime.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
