@@ -33,6 +33,7 @@ namespace NutritionFactsApp
 
             // Đăng ký sự kiện đổi Tab
             tabControlProducts.SelectedIndexChanged += TabControl_SelectedIndexChanged;
+            button1.Click += button1_Click;
         }
 
         private void UserControl1_Load(object sender, EventArgs e)
@@ -220,6 +221,54 @@ namespace NutritionFactsApp
             if (!string.IsNullOrEmpty(txtProductName.Text) && txtProductName.Text != Constants.PlaceHolderForTxtProductName)
             {
                 txtNameFile.Text = SaveImage.BuildFileName(txtProductName.Text);
+            }
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            if (BatchList == null || BatchList.Count == 0)
+            {
+                MessageBox.Show("Không có sản phẩm nào để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string path = null;
+            if (SaveImage.IsRegistryKeyExists())
+            {
+                path = SaveImage.ReadRegistryKeys();
+            }
+            if (string.IsNullOrEmpty(path))
+            {
+                path = SaveImage.SelectFolder();
+            }
+
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            int successCount = 0;
+            try
+            {
+                for (int i = 0; i < BatchList.Count; i++)
+                {
+                    var model = BatchList[i];
+                    string prodName = string.IsNullOrWhiteSpace(model.ProductName) ? $"SanPham_{i + 1}" : model.ProductName;
+                    string fileName = SaveImage.BuildFileName(prodName);
+                    string targetPath = Path.Combine(path, fileName);
+
+                    await new Python().RunGeneratorAsync(model, targetPath);
+                    if (File.Exists(targetPath))
+                    {
+                        successCount++;
+                    }
+                }
+
+                MessageBox.Show($"Đã xuất thành công {successCount}/{BatchList.Count} sản phẩm ra thư mục:\n{path}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xuất toàn bộ: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
