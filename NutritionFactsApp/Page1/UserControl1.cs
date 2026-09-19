@@ -18,7 +18,7 @@ namespace NutritionFactsApp
         // Thay đổi: Dùng List thay cho CurrentModel đơn lẻ
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public List<NutritionModel> BatchList { get; set; } = new List<NutritionModel> { new NutritionModel(), new NutritionModel() };
+        public List<NutritionModel> BatchList { get; set; } = new List<NutritionModel> { new NutritionModel() };
 
         public UserControl1()
         {
@@ -34,6 +34,39 @@ namespace NutritionFactsApp
             // Đăng ký sự kiện đổi Tab
             tabControlProducts.SelectedIndexChanged += TabControl_SelectedIndexChanged;
             button1.Click += button1_Click;
+
+            // Đăng ký context menu cho tabControlProducts (chuột phải -> Tạo sản phẩm)
+            ContextMenuStrip tabContextMenu = new ContextMenuStrip();
+            ToolStripMenuItem miCreateProduct = new ToolStripMenuItem("Tạo sản phẩm");
+            miCreateProduct.Click += MiCreateProduct_Click;
+            tabContextMenu.Items.Add(miCreateProduct);
+            tabControlProducts.ContextMenuStrip = tabContextMenu;
+            tabControlProducts.MouseDown += TabControlProducts_MouseDown;
+        }
+
+        private void TabControlProducts_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                for (int i = 0; i < tabControlProducts.TabCount; i++)
+                {
+                    if (tabControlProducts.GetTabRect(i).Contains(e.Location))
+                    {
+                        tabControlProducts.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void MiCreateProduct_Click(object sender, EventArgs e)
+        {
+            var newModel = new NutritionModel();
+            BatchList.Add(newModel);
+            UpdateTabs();
+            tabControlProducts.SelectedIndex = BatchList.Count - 1;
+            JsonMapper.MapModelToUI(this, newModel);
+            codeEditor.Text = JsonConvert.SerializeObject(BatchList, Formatting.Indented);
         }
 
         private void UserControl1_Load(object sender, EventArgs e)
@@ -230,6 +263,22 @@ namespace NutritionFactsApp
             {
                 MessageBox.Show("Không có sản phẩm nào để xuất.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
+            }
+
+            // Kiểm tra xem tất cả các tab có điền đủ 4 ô đầu hay không (tên sp, serving size, serving, calo)
+            for (int i = 0; i < BatchList.Count; i++)
+            {
+                var model = BatchList[i];
+                bool hasName = !string.IsNullOrWhiteSpace(model.ProductName) && model.ProductName != Constants.PlaceHolderForTxtProductName;
+                bool hasServingWeight = model.ServingWeight > 0;
+                bool hasServingCount = model.ServingCount > 0;
+
+                if (!hasName || !hasServingWeight || !hasServingCount || model.Calories <= 0)
+                {
+                    string tabTitle = string.IsNullOrWhiteSpace(model.ProductName) ? $"Sản phẩm {i + 1}" : model.ProductName;
+                    MessageBox.Show($"Tab '{tabTitle}' (Sản phẩm {i + 1}) không có đủ 4 thông tin đầu (Tên sản phẩm, Serving size, Serving, Calo). Vui lòng điền đầy đủ trước khi xuất toàn bộ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
             }
 
             string path = null;

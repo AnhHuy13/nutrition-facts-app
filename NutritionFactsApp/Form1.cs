@@ -13,7 +13,7 @@ namespace NutritionFactsApp
             InitializeComponent();
             InitializePython();
 
-            this.Width = 1539;
+            this.Width = 1000;
             this.Height = 600;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
