@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace NutritionFactsApp
@@ -142,10 +143,13 @@ namespace NutritionFactsApp
 
         public static string BuildFileName(string productName)
         {
-            string ProductName = Ultility.RemoveUnicode(productName);
-            ProductName = ProductName.Replace(" ", "_");
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            return $"{ProductName}_{timestamp}.jpg";
+            string cleanName = productName;
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                cleanName = cleanName.Replace(c, '_');
+            }
+            string dateStr = DateTime.Now.ToString("dd-MM-yyyy");
+            return $"{cleanName} - {dateStr}.jpg";
         }
     }
 }
