@@ -72,10 +72,12 @@ def format_servings(count: float) -> str:
     return f"{number} {noun} per container"
 
 
+@lru_cache(maxsize=128)
 def normalize_nutrient_key(name: str) -> str:
     return " ".join(name.strip().lower().split())
 
 
+@lru_cache(maxsize=128)
 def nutrient_role(name: str) -> str:
     """Return 'micro', 'added', 'sub', 'main', or 'other'."""
     key = normalize_nutrient_key(name)
@@ -90,6 +92,7 @@ def nutrient_role(name: str) -> str:
     return "other"
 
 
+@lru_cache(maxsize=128)
 def display_nutrient_name(name: str) -> str:
     key = normalize_nutrient_key(name)
     if key in DISPLAY_NAMES:
