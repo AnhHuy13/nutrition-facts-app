@@ -1,12 +1,34 @@
 """Pillow drawing helpers for Nutrition Facts labels."""
 
 from functools import lru_cache
+from pathlib import Path
+import ctypes
 from typing import List, Optional, Tuple
 
 from PIL import Image, ImageDraw
 
 from nutrition_facts.constants import COLOR_BLACK
 from nutrition_facts.utils import load_font
+
+_dll_path = Path(__file__).parent / "renderer_core.dll"
+_c_lib = None
+if _dll_path.exists():
+    try:
+        _c_lib = ctypes.CDLL(str(_dll_path))
+        _c_lib.fill_rect.argtypes = [
+            ctypes.c_void_p, ctypes.c_int, ctypes.c_int,
+            ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+            ctypes.c_ubyte, ctypes.c_ubyte, ctypes.c_ubyte
+        ]
+    except Exception:
+        _c_lib = None
+
+
+def _parse_color(color: str) -> Tuple[int, int, int]:
+    if color.startswith("#"):
+        c = color.lstrip("#")
+        return tuple(int(c[i:i+2], 16) for i in (0, 2, 4))
+    return (0, 0, 0)
 
 
 def _to_draw(img: Image.Image) -> ImageDraw.ImageDraw:
@@ -105,18 +127,37 @@ def draw_horizontal_line(
     color: str = COLOR_BLACK,
     x: int = 0,
 ) -> None:
-    """Draw a horizontal bar from x to x+width at y."""
-    draw = _to_draw(img)
+    """Draw a horizontal bar from x to x+width at y using C++ acceleration."""
     thickness = max(1, thickness)
-    draw.rectangle([x, y, x + width - 1, y + thickness - 1], fill=color)
+    if _c_lib is not None and img.mode == "RGB":
+        r, g, b = _parse_color(color)
+        buf = bytearray(img.tobytes())
+        ptr = (ctypes.c_ubyte * len(buf)).from_buffer(buf)
+        _c_lib.fill_rect(ptr, img.width, img.height, x, y, width, thickness, r, g, b)
+        img.frombytes(bytes(buf))
+    else:
+        draw = _to_draw(img)
+        draw.rectangle([x, y, x + width - 1, y + thickness - 1], fill=color)
 
 
 def draw_border(img: Image.Image, thickness: int = 1, color: str = COLOR_BLACK) -> None:
-    """Draw a rectangle border around the image."""
-    draw = _to_draw(img)
+    """Draw a rectangle border around the image using C++ acceleration."""
     w, h = img.size
-    for i in range(max(1, thickness)):
-        draw.rectangle([i, i, w - 1 - i, h - 1 - i], outline=color)
+    thickness = max(1, thickness)
+    if _c_lib is not None and img.mode == "RGB":
+        r, g, b = _parse_color(color)
+        buf = bytearray(img.tobytes())
+        ptr = (ctypes.c_ubyte * len(buf)).from_buffer(buf)
+        for i in range(thickness):
+            _c_lib.fill_rect(ptr, w, h, i, i, w - 2 * i, 1, r, g, b)
+            _c_lib.fill_rect(ptr, w, h, i, h - 1 - i, w - 2 * i, 1, r, g, b)
+            _c_lib.fill_rect(ptr, w, h, i, i, 1, h - 2 * i, r, g, b)
+            _c_lib.fill_rect(ptr, w, h, w - 1 - i, i, 1, h - 2 * i, r, g, b)
+        img.frombytes(bytes(buf))
+    else:
+        draw = _to_draw(img)
+        for i in range(thickness):
+            draw.rectangle([i, i, w - 1 - i, h - 1 - i], outline=color)
 
 
 def draw_nutrient_row(
