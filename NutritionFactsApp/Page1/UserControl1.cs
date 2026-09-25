@@ -15,6 +15,12 @@ namespace NutritionFactsApp
         private Timer _debounceTimer;
         private string _currentImagePath = null;
 
+        private static readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         // Thay đổi: Dùng List thay cho CurrentModel đơn lẻ
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -85,7 +91,6 @@ namespace NutritionFactsApp
 
         private void UpdateTabs()
         {
-            _isUpdating = true;
             int oldIndex = tabControlProducts.SelectedIndex;
             tabControlProducts.TabPages.Clear();
             for (int i = 0; i < BatchList.Count; i++)
@@ -101,7 +106,6 @@ namespace NutritionFactsApp
             {
                 tabControlProducts.SelectedIndex = 0;
             }
-            _isUpdating = false;
         }
 
         private void RegisterUIEvents(Control parent)
@@ -161,13 +165,29 @@ namespace NutritionFactsApp
         {
             if (_isUpdating) return;
             _isUpdating = true;
-            int index = tabControlProducts.SelectedIndex;
-            // Đảm bảo không vượt quá chỉ số mảng
-            if (index >= 0 && index < BatchList.Count)
+            try
             {
-                JsonMapper.MapModelToUI(this, BatchList[index]);
+                // Thà để trống/gray chứ không giữ hình ảnh cũ của tab trước
+                if (picProductImage.Image != null)
+                {
+                    picProductImage.Image.Dispose();
+                    picProductImage.Image = null;
+                }
+                lblError.Visible = false;
+
+                int index = tabControlProducts.SelectedIndex;
+                // Đảm bảo không vượt quá chỉ số mảng
+                if (index >= 0 && index < BatchList.Count)
+                {
+                    JsonMapper.MapModelToUI(this, BatchList[index]);
+                    _debounceTimer.Stop();
+                    _debounceTimer.Start();
+                }
             }
-            _isUpdating = false;
+            finally
+            {
+                _isUpdating = false;
+            }
         }
 
         private void CodeEditor_TextChanged(object sender, EventArgs e)
@@ -177,7 +197,33 @@ namespace NutritionFactsApp
 
             try
             {
-                var data = JsonConvert.DeserializeObject<List<NutritionModel>>(codeEditor.Text);
+                List<NutritionModel> data = null;
+                string text = codeEditor.Text?.Trim() ?? "";
+
+                // Strip markdown code block fences if present (e.g. ```json ... ``` or ``` ... ```)
+                if (text.StartsWith("```"))
+                {
+                    int firstNewline = text.IndexOf('\n');
+                    if (firstNewline > 0)
+                    {
+                        text = text.Substring(firstNewline + 1).Trim();
+                    }
+                    if (text.EndsWith("```"))
+                    {
+                        text = text.Substring(0, text.Length - 3).Trim();
+                    }
+                }
+
+                if (text.StartsWith("{"))
+                {
+                    var singleModel = JsonConvert.DeserializeObject<NutritionModel>(text, _jsonSettings);
+                    if (singleModel != null) data = new List<NutritionModel> { singleModel };
+                }
+                else if (text.StartsWith("["))
+                {
+                    data = JsonConvert.DeserializeObject<List<NutritionModel>>(text, _jsonSettings);
+                }
+
                 if (data != null && data.Count > 0)
                 {
                     BatchList = data;
@@ -192,8 +238,10 @@ namespace NutritionFactsApp
                 }
             }
             catch { }
-
-            _isUpdating = false;
+            finally
+            {
+                _isUpdating = false;
+            }
         }
 
         private async void DebounceTimer_Tick(object sender, EventArgs e)
@@ -202,12 +250,21 @@ namespace NutritionFactsApp
             int index = tabControlProducts.SelectedIndex;
             if (index < 0 || index >= BatchList.Count) return;
             var model = BatchList[index];
-            if (string.IsNullOrWhiteSpace(model.ProductName)) return;
+            if (string.IsNullOrWhiteSpace(model.ProductName) || model.ProductName == Constants.PlaceHolderForTxtProductName)
+            {
+                if (picProductImage.Image != null)
+                {
+                    picProductImage.Image.Dispose();
+                    picProductImage.Image = null;
+                }
+                lblError.Visible = false;
+                return;
+            }
 
             try
             {
                 string newImagePath = await new Python().RunGeneratorAsync(model);
-                if (File.Exists(newImagePath))
+                if (!string.IsNullOrEmpty(newImagePath) && File.Exists(newImagePath))
                 {
                     lblError.Visible = false;
                     if (picProductImage.Image != null) { picProductImage.Image.Dispose(); picProductImage.Image = null; }
@@ -218,9 +275,17 @@ namespace NutritionFactsApp
                     }
                     _currentImagePath = newImagePath;
                 }
+                else
+                {
+                    if (picProductImage.Image != null) { picProductImage.Image.Dispose(); picProductImage.Image = null; }
+                    lblError.Visible = true;
+                    lblError.Text = "Lỗi render: Không thể tạo hình ảnh.";
+                }
             }
             catch (Exception ex)
             {
+                // CẤM ĐỂ LẠI CÁI CŨ BẰNG MỌI GIÁ
+                if (picProductImage.Image != null) { picProductImage.Image.Dispose(); picProductImage.Image = null; }
                 lblError.Visible = true;
                 lblError.Text = "Lỗi render: " + ex.Message;
             }
