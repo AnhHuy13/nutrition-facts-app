@@ -126,17 +126,6 @@ class NutritionFactsGenerator:
                 "data must be a NutritionData instance"
             )
 
-        payload = (
-            data.model_dump()
-            if hasattr(data, "model_dump")
-            else data.dict()
-        )
-
-        if hasattr(NutritionData, "model_validate"):
-            NutritionData.model_validate(payload)
-        else:
-            NutritionData.parse_obj(payload)
-
     def _create_blank_image(self) -> Image.Image:
         canvas_h = max(self.height, 2400)
 
