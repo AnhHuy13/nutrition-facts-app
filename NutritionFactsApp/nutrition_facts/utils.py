@@ -1,5 +1,6 @@
 """Helper functions for formatting, fonts, and file handling."""
 
+from functools import lru_cache
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -142,6 +143,7 @@ def needs_full_hairline_before(prev_name: str, curr_name: str) -> bool:
     return True
 
 
+@lru_cache(maxsize=128)
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     """Load Helvetica Regular / Helvetica Black stand-ins (Arial / Arial Black)."""
     size = max(1, int(size))

@@ -1,5 +1,6 @@
 """Pillow drawing helpers for Nutrition Facts labels."""
 
+from functools import lru_cache
 from typing import List, Optional, Tuple
 
 from PIL import Image, ImageDraw
@@ -43,15 +44,14 @@ def draw_text_right(
     draw.text((right_x, y), text, fill=color, font=font, anchor=anchor)
 
 
+@lru_cache(maxsize=512)
 def measure_text(text: str, font_size: int, bold: bool = False) -> Tuple[int, int]:
     """Return (advance width, line height) using font metrics."""
     font = load_font(font_size, bold=bold)
     if hasattr(font, "getlength"):
         width = int(round(font.getlength(text)))
     else:
-        dummy = Image.new("RGB", (8, 8))
-        draw = ImageDraw.Draw(dummy)
-        bbox = draw.textbbox((0, 0), text, font=font)
+        bbox = font.getbbox(text)
         width = bbox[2] - bbox[0]
     ascent, descent = font.getmetrics()
     return width, ascent + descent

@@ -232,20 +232,7 @@ class NutritionFactsGenerator:
             bold=bold,
         )
 
-        dummy = Image.new(
-            "RGB",
-            (1, 1),
-            RGB_WHITE,
-        )
-
-        draw = ImageDraw.Draw(dummy)
-
-        bbox = draw.textbbox(
-            (0, 0),
-            text,
-            font=font,
-            anchor="lt",
-        )
+        bbox = font.getbbox(text)
 
         return max(
             1,
