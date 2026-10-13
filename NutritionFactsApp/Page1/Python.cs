@@ -12,6 +12,11 @@ namespace NutritionFactsApp
         {
             string targetPath = outputPath ?? Path.Combine(Path.GetTempPath(), $"nutrition_{Guid.NewGuid().ToString().Substring(0, 8)}.png");
 
+            if (Form1.PythonInitTask != null)
+            {
+                await Form1.PythonInitTask;
+            }
+
             await Task.Run(() =>
             {
                 if (!PythonEngine.IsInitialized) return;
@@ -100,10 +105,13 @@ data = NutritionData(
     nutrients=nutrients
 )
 
-gen = NutritionFactsGenerator()
-gen.generate(data, output_path)
-";
+                    gen = NutritionFactsGenerator()
+                    gen.generate(data, output_path)
+                    ";
                         scope.Exec(script);
+
+                        // Lưu file metadata (.json) tương ứng với đường dẫn ảnh
+                        MetadataHelper.SaveMetadata(targetPath, model);
                     }
                     catch (Exception ex)
                     {

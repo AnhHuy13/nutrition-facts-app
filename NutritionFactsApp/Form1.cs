@@ -1,23 +1,38 @@
 ﻿using Python.Runtime;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NutritionFactsApp
 {
     public partial class Form1 : Form
     {
+        public static Task PythonInitTask { get; private set; }
 
         public Form1()
         {
             InitializeComponent();
-            InitializePython();
+            PythonInitTask = Task.Run(() => InitializePython());
 
             this.Width = 1000;
             this.Height = 600;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+        }
+
+        private void SwitchPageToCreatePage(bool isCreatePage)
+        {
+            if (isCreatePage)
+            {
+                userControl1.BringToFront();
+            }
+            else
+            {
+                // userControl2.BringToFront();
+            }
         }
 
         private void InitializePython()
@@ -55,12 +70,22 @@ namespace NutritionFactsApp
         }
         private void manageFactsBtnNav_Click(object sender, EventArgs e)
         {
-            // will make it soon
+            SwitchPageToCreatePage(false);
         }
 
         private void createFactsBtnNav_Click(object sender, EventArgs e)
         {
-            // will make it soon
+            SwitchPageToCreatePage(true);
+        }
+
+        private void toNewDictToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string path = SaveImage.SelectFolder();
+            if (!string.IsNullOrEmpty(path))
+            {
+                SaveImage.SaveOrUpdateRegistryKey(path);
+                MessageBox.Show($"Đã cập nhật thư mục mặc định thành:\n{path}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

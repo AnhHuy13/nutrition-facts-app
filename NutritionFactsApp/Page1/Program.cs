@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 
 namespace NutritionFactsApp
 {
@@ -15,6 +16,9 @@ namespace NutritionFactsApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Tự động kiểm tra cập nhật (Thay đường dẫn URL đến file update.xml trên GitHub của bạn)
+            AutoUpdater.Start("https://raw.githubusercontent.com/username/NutritionFactsApp/main/update.xml");
 
             MainForm = new Form1();
             Application.Run(MainForm);

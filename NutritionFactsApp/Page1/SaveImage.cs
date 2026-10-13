@@ -7,6 +7,9 @@ namespace NutritionFactsApp
 {
     public class SaveImage
     {
+        private const string RegistrySubKey = @"Software\NutritionFactsApp";
+        private const string ValueName = "PathDefault";
+
         public static void SaveImageToFile(PictureBox image, string filePath)
         {
             try
@@ -16,6 +19,13 @@ namespace NutritionFactsApp
                     MessageBox.Show("Không có ảnh để lưu.");
                     return;
                 }
+
+                string dir = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
                 image.Image.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
             }
             catch (Exception ex)
@@ -26,45 +36,41 @@ namespace NutritionFactsApp
 
         public static void AddRegistryKeys(string pathDefault)
         {
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\NutritionFactsApp"))
-                {
-                    if (key != null)
-                    {
-                        key.SetValue("NutritionFactsApp", "NutritionFactsApp");                      // REG_SZ (String)
-                        key.SetValue("PathDefault", pathDefault, RegistryValueKind.String); // REG_SZ (String)
-
-                        Console.WriteLine("Registry keys added successfully.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Đã có lỗi xảy ra khi viết dữ liệu: {ex.Message}");
-            }
+            SaveOrUpdateRegistryKey(pathDefault);
         }
 
         public static void ChangeRegistryKeys(string pathDefault)
         {
+            SaveOrUpdateRegistryKey(pathDefault);
+        }
+
+        public static void SaveOrUpdateRegistryKey(string pathDefault)
+        {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NutritionFactsApp", writable: true))
+                if (string.IsNullOrWhiteSpace(pathDefault))
+                {
+                    return;
+                }
+
+                if (!Directory.Exists(pathDefault))
+                {
+                    Directory.CreateDirectory(pathDefault);
+                }
+
+                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(RegistrySubKey))
                 {
                     if (key != null)
                     {
-                        key.SetValue("PathDefault", pathDefault, RegistryValueKind.String); // REG_SZ (String)
-                        Console.WriteLine("Registry keys changed successfully.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không tìm thấy khóa đăng ký để thay đổi.");
+                        key.SetValue("NutritionFactsApp", "NutritionFactsApp", RegistryValueKind.String);
+                        key.SetValue(ValueName, pathDefault, RegistryValueKind.String);
+                        Console.WriteLine("Registry keys saved successfully.");
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Đã có lỗi xảy ra khi thay đổi dữ liệu: {ex.Message}");
+                MessageBox.Show($"Đã có lỗi xảy ra khi lưu registry: {ex.Message}");
             }
         }
 
@@ -72,54 +78,49 @@ namespace NutritionFactsApp
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NutritionFactsApp"))
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegistrySubKey))
                 {
                     if (key != null)
                     {
-                        object value = key.GetValue("PathDefault");
+                        object value = key.GetValue(ValueName);
                         if (value != null)
                         {
-                            return value.ToString();
+                            string path = value.ToString();
+                            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+                            {
+                                return path;
+                            }
                         }
-                        else
-                        {
-                            MessageBox.Show("Không tìm thấy giá trị PathDefault trong khóa đăng ký.");
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không tìm thấy khóa đăng ký.");
-                        return null;
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Đã có lỗi xảy ra khi đọc dữ liệu: {ex.Message}");
-                return null;
+                MessageBox.Show($"Đã có lỗi xảy ra khi đọc dữ liệu registry: {ex.Message}");
             }
+            return null;
         }
 
         public static bool IsRegistryKeyExists()
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\NutritionFactsApp"))
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegistrySubKey))
                 {
-                    if (key == null)
+                    if (key != null)
                     {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
+                        object value = key.GetValue(ValueName);
+                        if (value != null)
+                        {
+                            string path = value.ToString();
+                            return !string.IsNullOrEmpty(path) && Directory.Exists(path);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Đã có lỗi xảy ra khi kiểm tra dữ liệu: {ex.Message}");
+                MessageBox.Show($"Đã có lỗi xảy ra khi kiểm tra registry: {ex.Message}");
             }
             return false;
         }
@@ -128,14 +129,21 @@ namespace NutritionFactsApp
         {
             using (FolderBrowserDialog folderBrowser = new FolderBrowserDialog())
             {
-                folderBrowser.Description = "Đặt/đổi thư mục mặc định";
+                folderBrowser.Description = "Chọn thư mục lưu mặc định";
                 folderBrowser.ShowNewFolderButton = true;
                 folderBrowser.RootFolder = Environment.SpecialFolder.MyComputer;
 
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
                     string selectedPath = folderBrowser.SelectedPath;
-                    return selectedPath;
+                    if (!string.IsNullOrEmpty(selectedPath))
+                    {
+                        if (!Directory.Exists(selectedPath))
+                        {
+                            Directory.CreateDirectory(selectedPath);
+                        }
+                        return selectedPath;
+                    }
                 }
             }
             return null;

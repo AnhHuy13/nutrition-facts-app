@@ -21,7 +21,6 @@ namespace NutritionFactsApp
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        // Thay đổi: Dùng List thay cho CurrentModel đơn lẻ
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<NutritionModel> BatchList { get; set; } = new List<NutritionModel> { new NutritionModel() };
@@ -305,13 +304,44 @@ namespace NutritionFactsApp
 
         private void exportBtn_Click(object sender, EventArgs e)
         {
-            // Logic xuất ảnh hiện tại của tab đang chọn
-            if (picProductImage.Image == null) return;
-            string path = SaveImage.SelectFolder();
-            if (!string.IsNullOrEmpty(path))
+            if (picProductImage.Image == null)
             {
-                SaveImage.SaveImageToFile(picProductImage, Path.Combine(path, SaveImage.BuildFileName(BatchList[tabControlProducts.SelectedIndex].ProductName)));
+                MessageBox.Show("Không có ảnh để xuất. Vui lòng tạo ảnh trước.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            string path = null;
+            if (SaveImage.IsRegistryKeyExists())
+            {
+                path = SaveImage.ReadRegistryKeys();
+            }
+            if (string.IsNullOrEmpty(path))
+            {
+                path = SaveImage.SelectFolder();
+                if (string.IsNullOrEmpty(path))
+                {
+                    return;
+                }
+                SaveImage.SaveOrUpdateRegistryKey(path);
+            }
+
+            string productName = "SanPham";
+            if (BatchList != null && tabControlProducts.SelectedIndex >= 0 && tabControlProducts.SelectedIndex < BatchList.Count)
+            {
+                var prod = BatchList[tabControlProducts.SelectedIndex];
+                if (!string.IsNullOrWhiteSpace(prod.ProductName) && prod.ProductName != Constants.PlaceHolderForTxtProductName)
+                {
+                    productName = prod.ProductName;
+                }
+            }
+
+            string filePath = Path.Combine(path, SaveImage.BuildFileName(productName));
+            SaveImage.SaveImageToFile(picProductImage, filePath);
+            if (BatchList != null && tabControlProducts.SelectedIndex >= 0 && tabControlProducts.SelectedIndex < BatchList.Count)
+            {
+                MetadataHelper.SaveMetadata(filePath, BatchList[tabControlProducts.SelectedIndex]);
+            }
+            MessageBox.Show($"Đã xuất ảnh thành công ra thư mục:\n{path}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void txtProductName_TextChanged(object sender, EventArgs e)
@@ -354,13 +384,12 @@ namespace NutritionFactsApp
             if (string.IsNullOrEmpty(path))
             {
                 path = SaveImage.SelectFolder();
+                if (string.IsNullOrEmpty(path))
+                {
+                    return;
+                }
+                SaveImage.SaveOrUpdateRegistryKey(path);
             }
-
-            if (string.IsNullOrEmpty(path))
-            {
-                return;
-            }
-
             int successCount = 0;
             try
             {

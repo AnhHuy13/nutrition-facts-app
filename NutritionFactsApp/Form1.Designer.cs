@@ -30,7 +30,7 @@
         {
             this.panel2 = new System.Windows.Forms.Panel();
             this.manageFactsBtnNav = new System.Windows.Forms.Button();
-            this.userControl11 = new NutritionFactsApp.UserControl1();
+            this.userControl1 = new NutritionFactsApp.UserControl1();
             this.createFactsBtnNav = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,12 +45,12 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.manageFactsBtnNav);
-            this.panel2.Controls.Add(this.userControl11);
+            this.panel2.Controls.Add(this.userControl1);
             this.panel2.Controls.Add(this.createFactsBtnNav);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 36);
+            this.panel2.Location = new System.Drawing.Point(0, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1517, 808);
+            this.panel2.Size = new System.Drawing.Size(1517, 811);
             this.panel2.TabIndex = 1;
             // 
             // manageFactsBtnNav
@@ -64,12 +64,12 @@
             this.manageFactsBtnNav.UseVisualStyleBackColor = true;
             this.manageFactsBtnNav.Click += new System.EventHandler(this.manageFactsBtnNav_Click);
             // 
-            // userControl11
+            // userControl1
             // 
-            this.userControl11.Location = new System.Drawing.Point(211, 3);
-            this.userControl11.Name = "userControl11";
-            this.userControl11.Size = new System.Drawing.Size(1270, 851);
-            this.userControl11.TabIndex = 2;
+            this.userControl1.Location = new System.Drawing.Point(211, 3);
+            this.userControl1.Name = "userControl1";
+            this.userControl1.Size = new System.Drawing.Size(1270, 851);
+            this.userControl1.TabIndex = 2;
             // 
             // createFactsBtnNav
             // 
@@ -91,7 +91,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1517, 36);
+            this.menuStrip1.Size = new System.Drawing.Size(1517, 33);
             this.menuStrip1.TabIndex = 3;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -100,7 +100,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toNewDictToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 30);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // toNewDictToolStripMenuItem
@@ -108,6 +108,7 @@
             this.toNewDictToolStripMenuItem.Name = "toNewDictToolStripMenuItem";
             this.toNewDictToolStripMenuItem.Size = new System.Drawing.Size(358, 34);
             this.toNewDictToolStripMenuItem.Text = "Chuyển thư mục mặc định mới";
+            this.toNewDictToolStripMenuItem.Click += new System.EventHandler(this.toNewDictToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -151,7 +152,7 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button manageFactsBtnNav;
         private System.Windows.Forms.Button createFactsBtnNav;
-        private UserControl1 userControl11;
+        private UserControl1 userControl1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toNewDictToolStripMenuItem;
