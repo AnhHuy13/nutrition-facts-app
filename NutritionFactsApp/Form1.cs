@@ -25,8 +25,8 @@ namespace NutritionFactsApp
             }
             catch { }
 
-            this.Width = 1000;
-            this.Height = 640;
+            this.Width = userControl1.Width + 25;
+            this.Height = userControl1.Height + 75;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
