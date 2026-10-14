@@ -50,11 +50,12 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 33);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1517, 811);
+            this.panel2.Size = new System.Drawing.Size(1517, 841);
             this.panel2.TabIndex = 1;
             // 
             // manageFactsBtnNav
             // 
+            this.manageFactsBtnNav.Enabled = false;
             this.manageFactsBtnNav.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.manageFactsBtnNav.Location = new System.Drawing.Point(3, 176);
             this.manageFactsBtnNav.Name = "manageFactsBtnNav";
@@ -115,7 +116,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 822);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 852);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1517, 22);
             this.statusStrip1.TabIndex = 4;
@@ -129,7 +130,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1517, 844);
+            this.ClientSize = new System.Drawing.Size(1517, 874);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.menuStrip1);

@@ -12,14 +12,12 @@ namespace NutritionFactsApp
         {
             string targetPath = outputPath ?? Path.Combine(Path.GetTempPath(), $"nutrition_{Guid.NewGuid().ToString().Substring(0, 8)}.png");
 
-            if (Form1.PythonInitTask != null)
-            {
-                await Form1.PythonInitTask;
-            }
-
             await Task.Run(() =>
             {
-                if (!PythonEngine.IsInitialized) return;
+                if (!PythonEngine.IsInitialized)
+                {
+                    throw new Exception("Python Engine chưa được khởi tạo.");
+                }
 
                 using (Py.GIL())
                 {
@@ -30,20 +28,23 @@ namespace NutritionFactsApp
                         scope.Set("data_json", json);
                         scope.Set("output_path", targetPath);
 
-                        // sẽ thêm metadata đây
+                        string baseDir = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/");
+
                         string script = $@"
 import json
 import sys
 import os
 
-sys.path.append(os.getcwd())
+base_dir = r'{baseDir}'
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
 from nutrition_facts.models import NutritionData, ServingInfo, Nutrient
 from nutrition_facts.generator import NutritionFactsGenerator
 
 d = json.loads(data_json)
 
 # Chuẩn FDA (DV) cho cả Đa lượng và Vi lượng
-# Đơn vị trong dict: g (đa lượng), mg/mcg (vi lượng)
 DV_STANDARDS = {{
     'Total Fat': 78, 'Saturated Fat': 20, 'Cholesterol': 300, 
     'Sodium': 2300, 'Total Carbohydrate': 275, 'Dietary Fiber': 28, 'Protein': 50,
@@ -69,35 +70,20 @@ nutrients = [
     Nutrient(name='Added Sugars', value=int(d['AddedSugars']), unit='g'),
     Nutrient(name='Protein', value=int(d['Protein']), unit='g', daily_value_percent=get_dv('Protein', int(d['Protein']))),
     
-    # Vi lượng: Tự tính dựa trên giá trị mg/mcg nhập vào
     Nutrient(name='Vitamin D', value=int(d['VitaminD']), unit='mcg', daily_value_percent=get_dv('Vitamin D', int(d['VitaminD']))),
     Nutrient(name='Calcium', value=int(d['Calcium']), unit='mg', daily_value_percent=get_dv('Calcium', int(d['Calcium']))),
     Nutrient(name='Iron', value=int(d['Iron']), unit='mg', daily_value_percent=get_dv('Iron', int(d['Iron']))),
     Nutrient(name='Potassium', value=int(d['Potassium']), unit='mg', daily_value_percent=get_dv('Potassium', int(d['Potassium'])))
 ]
 
-
 unit_text = str(d.get('ServingUnit', '')).strip()
 weight_val = d.get('ServingWeight', 0)
 
-
-
-
-
-#ghép chuỗi đơn vị và size 
 if unit_text and unit_text != '{Constants.PlaceHolderForTxtServingUnit}':
     formatted_size = f'{{unit_text}} ({{int(weight_val)}}g)'
 else:
     formatted_size = f'{{int(weight_val)}}g'
 
-
-
-
-
-
-
-
-# Đảm bảo data nằm thẳng hàng
 data = NutritionData(
     product_name=d.get('ProductName', 'Product'),
     serving_info=ServingInfo(serving_size=formatted_size, servings_per_container=int(d['ServingCount'])),
@@ -105,21 +91,21 @@ data = NutritionData(
     nutrients=nutrients
 )
 
-                    gen = NutritionFactsGenerator()
-                    gen.generate(data, output_path)
-                    ";
+gen = NutritionFactsGenerator()
+gen.generate(data, output_path)
+";
                         scope.Exec(script);
 
-                        // Lưu file metadata (.json) tương ứng với đường dẫn ảnh
                         MetadataHelper.SaveMetadata(targetPath, model);
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("Lỗi Python: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("Lỗi Python: " + ex.ToString());
+                        throw new Exception(ex.Message);
                     }
                 }
             });
-            return targetPath; // Trả về đường dẫn file đã tạo
+            return targetPath;
         }
     }
 }

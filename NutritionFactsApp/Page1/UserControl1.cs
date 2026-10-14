@@ -44,9 +44,34 @@ namespace NutritionFactsApp
             ContextMenuStrip tabContextMenu = new ContextMenuStrip();
             ToolStripMenuItem miCreateProduct = new ToolStripMenuItem("Tạo sản phẩm");
             miCreateProduct.Click += MiCreateProduct_Click;
+
+            ToolStripMenuItem miDeleteProduct = new ToolStripMenuItem("Xoá sản phẩm");
+            miDeleteProduct.Click += MiDeleteProduct_Click;
+
             tabContextMenu.Items.Add(miCreateProduct);
+            tabContextMenu.Items.Add(miDeleteProduct);
             tabControlProducts.ContextMenuStrip = tabContextMenu;
             tabControlProducts.MouseDown += TabControlProducts_MouseDown;
+        }
+
+        private void MiDeleteProduct_Click(object sender, EventArgs e)
+        {
+            if (BatchList.Count <= 1)
+            {
+                MessageBox.Show("Cần giữ lại ít nhất một sản phẩm.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int index = tabControlProducts.SelectedIndex;
+            if (index >= 0 && index < BatchList.Count)
+            {
+                BatchList.RemoveAt(index);
+                UpdateTabs();
+                int newIndex = Math.Max(0, index - 1);
+                tabControlProducts.SelectedIndex = newIndex;
+                JsonMapper.MapModelToUI(this, BatchList[newIndex]);
+                codeEditor.Text = JsonConvert.SerializeObject(BatchList, Formatting.Indented);
+            }
         }
 
         private void TabControlProducts_MouseDown(object sender, MouseEventArgs e)
@@ -80,12 +105,26 @@ namespace NutritionFactsApp
             Ultility.SetPlaceholder(txtServingUnit, Constants.PlaceHolderForTxtServingUnit);
             SetCodeEditor(codeEditor);
 
+            UpdatePathLabel();
             UpdateTabs();
             if (BatchList.Count > 0)
             {
                 JsonMapper.MapModelToUI(this, BatchList[0]);
             }
             codeEditor.Text = JsonConvert.SerializeObject(BatchList, Formatting.Indented);
+        }
+
+        public void UpdatePathLabel()
+        {
+            string path = SaveImage.ReadRegistryKeys();
+            if (string.IsNullOrEmpty(path))
+            {
+                lblPathDefault.Text = "CHƯA CÓ ĐƯỜNG DẪN";
+            }
+            else
+            {
+                lblPathDefault.Text = $"Path: {path}";
+            }
         }
 
         private void UpdateTabs()
@@ -323,6 +362,7 @@ namespace NutritionFactsApp
                     return;
                 }
                 SaveImage.SaveOrUpdateRegistryKey(path);
+                UpdatePathLabel();
             }
 
             string productName = "SanPham";
@@ -389,6 +429,7 @@ namespace NutritionFactsApp
                     return;
                 }
                 SaveImage.SaveOrUpdateRegistryKey(path);
+                UpdatePathLabel();
             }
             int successCount = 0;
             try

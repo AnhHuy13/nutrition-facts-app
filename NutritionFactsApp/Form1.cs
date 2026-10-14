@@ -9,15 +9,14 @@ namespace NutritionFactsApp
 {
     public partial class Form1 : Form
     {
-        public static Task PythonInitTask { get; private set; }
-
         public Form1()
         {
             InitializeComponent();
-            PythonInitTask = Task.Run(() => InitializePython());
+            InitializePython();
+            userControl1.UpdatePathLabel();
 
             this.Width = 1000;
-            this.Height = 600;
+            this.Height = 640;
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -37,14 +36,12 @@ namespace NutritionFactsApp
 
         private void InitializePython()
         {
-            // BỎ Task.Run ra để kiểm tra xem nó có bị lỗi ngay lúc mở App không
             try
             {
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 string pythonDir = Path.Combine(baseDir, "python-3.8");
                 string dllPath = Path.Combine(pythonDir, "python38.dll");
 
-                // THÔNG BÁO CỤ THỂ NẾU SAI ĐƯỜNG DẪN
                 if (!File.Exists(dllPath))
                 {
                     MessageBox.Show("Không tìm thấy file DLL tại: " + dllPath, "Lỗi Python");
@@ -64,18 +61,17 @@ namespace NutritionFactsApp
             }
             catch (Exception ex)
             {
-                // Hiển thị lỗi ra MessageBox để bạn biết ngay tại sao không chạy
                 MessageBox.Show("Lỗi khởi tạo Python: " + ex.ToString(), "Error");
             }
         }
-        private void manageFactsBtnNav_Click(object sender, EventArgs e)
-        {
-            SwitchPageToCreatePage(false);
-        }
-
         private void createFactsBtnNav_Click(object sender, EventArgs e)
         {
             SwitchPageToCreatePage(true);
+        }
+
+        private void manageFactsBtnNav_Click(object sender, EventArgs e)
+        {
+            SwitchPageToCreatePage(false);
         }
 
         private void toNewDictToolStripMenuItem_Click(object sender, EventArgs e)
@@ -84,6 +80,7 @@ namespace NutritionFactsApp
             if (!string.IsNullOrEmpty(path))
             {
                 SaveImage.SaveOrUpdateRegistryKey(path);
+                userControl1.UpdatePathLabel();
                 MessageBox.Show($"Đã cập nhật thư mục mặc định thành:\n{path}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

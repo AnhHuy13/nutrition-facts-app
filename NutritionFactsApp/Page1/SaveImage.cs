@@ -9,6 +9,7 @@ namespace NutritionFactsApp
     {
         private const string RegistrySubKey = @"Software\NutritionFactsApp";
         private const string ValueName = "PathDefault";
+        private static string _cachedPathDefault = null;
 
         public static void SaveImageToFile(PictureBox image, string filePath)
         {
@@ -64,6 +65,7 @@ namespace NutritionFactsApp
                     {
                         key.SetValue("NutritionFactsApp", "NutritionFactsApp", RegistryValueKind.String);
                         key.SetValue(ValueName, pathDefault, RegistryValueKind.String);
+                        _cachedPathDefault = pathDefault;
                         Console.WriteLine("Registry keys saved successfully.");
                     }
                 }
@@ -88,6 +90,7 @@ namespace NutritionFactsApp
                             string path = value.ToString();
                             if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
                             {
+                                _cachedPathDefault = path;
                                 return path;
                             }
                         }
@@ -113,7 +116,9 @@ namespace NutritionFactsApp
                         if (value != null)
                         {
                             string path = value.ToString();
-                            return !string.IsNullOrEmpty(path) && Directory.Exists(path);
+                            bool exists = !string.IsNullOrEmpty(path) && Directory.Exists(path);
+                            if (exists) _cachedPathDefault = path;
+                            return exists;
                         }
                     }
                 }
@@ -123,6 +128,36 @@ namespace NutritionFactsApp
                 MessageBox.Show($"Đã có lỗi xảy ra khi kiểm tra registry: {ex.Message}");
             }
             return false;
+        }
+
+        /// <summary>
+        /// Kiểm tra xem giá trị PathDefault trong Windows Registry có bị thay đổi (so với lần đọc/lưu gần nhất) hay không.
+        /// </summary>
+        public static bool HasRegistryChanged()
+        {
+            try
+            {
+                string currentRegistryPath = null;
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegistrySubKey))
+                {
+                    if (key != null)
+                    {
+                        object value = key.GetValue(ValueName);
+                        if (value != null)
+                        {
+                            currentRegistryPath = value.ToString();
+                        }
+                    }
+                }
+
+                bool changed = (currentRegistryPath != _cachedPathDefault);
+                return changed;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Lỗi kiểm tra thay đổi registry: " + ex.Message);
+                return false;
+            }
         }
 
         public static string SelectFolder()
@@ -142,6 +177,7 @@ namespace NutritionFactsApp
                         {
                             Directory.CreateDirectory(selectedPath);
                         }
+                        SaveOrUpdateRegistryKey(selectedPath);
                         return selectedPath;
                     }
                 }

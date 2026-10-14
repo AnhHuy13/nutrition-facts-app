@@ -18,7 +18,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Restore NuGet Packages
-      run: nuget restore NutritionFactsApp/NutritionFactsApp.csproj
+      run: dotnet restore NutritionFactsApp/NutritionFactsApp.csproj
 
     - name: Build Solution
       run: msbuild NutritionFactsApp/NutritionFactsApp.csproj /p:Configuration=Release /p:Platform="Any CPU"
