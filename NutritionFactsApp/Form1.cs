@@ -15,6 +15,16 @@ namespace NutritionFactsApp
             InitializePython();
             userControl1.UpdatePathLabel();
 
+            try
+            {
+                string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon.ico");
+                if (File.Exists(iconPath))
+                {
+                    this.Icon = new System.Drawing.Icon(iconPath);
+                }
+            }
+            catch { }
+
             this.Width = 1000;
             this.Height = 640;
 
